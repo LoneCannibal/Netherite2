@@ -39,4 +39,12 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    from argparse import ArgumentParser
+
+    parser = ArgumentParser()
+    parser.add_argument('-p', '--port', default = 5001, type = int, help ="Port to listen")
+    args = parser.parse_args()
+    port = args.port
+    
+    #Run flask app
+    app.run(port=port, debug=True)

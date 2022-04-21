@@ -29,3 +29,14 @@ def view_transactions():
 @app.route('/wallet/new')
 def new_wallet():
     return render_template('new_wallet.html')
+
+if __name__ == '__main__':
+    from argparse import ArgumentParser
+
+    parser = ArgumentParser()
+    parser.add_argument('-p', '--port', default = 8081, type = int, help ="Port to listen")
+    args = parser.parse_args()
+    port = args.port
+    
+    #Run flask app
+    app.run(port=port, debug=True)
