@@ -49,19 +49,19 @@
     </div>
 
 
-    <!--Public and private key pair-->
+    <!--Public and private key pair textboxes-->
     <div class="container">
         <div class="row">
             <label  for="public_key" class="col-sm-2">Public Key:</label>
             <div class="col-sm-10">
-                <textarea class="form-control" name="" id="public_key" rows="3" readonly></textarea>
+                <textarea class="form-control" name="" id="public_key" rows="5" readonly></textarea>
             </div>
         </div>
         <br>
         <div class="row">
             <label  for="private_key" class="col-sm-2">Private Key:</label>
             <div class="col-sm-10">
-                <textarea class="form-control" name="" id="private_key" rows="3" readonly></textarea>
+                <textarea class="form-control" name="" id="private_key" rows="5" readonly></textarea>
             </div>
         </div>
     </div>
@@ -70,7 +70,7 @@
 
 
     <!--Warning messages-->
-    <div class="row" id="warning" style="display:none">
+    <div id="warning_msg" class="row" style="display:none">
         <div class="col-sm-12">
             <div class="alert alert-danger" role="alert">
                 WARNING!
@@ -96,10 +96,10 @@
                 $.ajax({
                     url:'/wallet/new',
                     type: 'GET',
-                    successs: function(response){
+                    success: function(response){
                         document.getElementById("public_key").innerHTML = response['public_key'];
                         document.getElementById("private_key").innerHTML = response['private_key'];
-                        docuemnt.getElementById("warning").style.display="block";
+                        document.getElementById("warning_msg").style.display = "block";
                     },
                     error: function(){
                         console.log(error);
