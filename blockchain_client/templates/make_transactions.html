@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Netherite Frontend</title>
+        
+        <link rel = "stylesheet" href = "/static/vendor/bootstrap/css/bootstrap.min.css">
+        <link rel = "stylesheet" href = "/static/vendor/DataTables/css/datatables.min.css">
+        <link rel = "stylesheet" href = "/static/vendor/font-awesome/font-awesome.min.css">
+        <link rel = "stylesheet" href = "/static/css/custom.css"
+    </head>
+    <body>
+        <!--Top Navigation bar-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+            <div class="container">
+                <a href ="#" class="navbar-brand">Netherite Client</a>
+                <!--Navigation Links-->
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="/"class="nav-link">Wallet Generator</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a href="/make/transactions"class="nav-link">Make Transactions</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/view/transactions"class="nav-link">View Transactions</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!--Transaction prompts-->
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="card-body">
+                        <h4 class="card-title">Send Netherite ingots</h4>
+                        <p class="card-text">Enter transaction details below and press the button</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Transaction details textboxes-->
+        <div class="container alert alert-secondary ">
+            <form action="" id="transaction_form">
+                <div class="row">
+                    <label for="" class="col-sm-2">Sender Public Key:</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="sender_public_key" id="sender_public_key" class="form-control">
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <label for="" class="col-sm-2">Sender Private Key:</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="sender_private_key" id="sender_private_key" class="form-control">
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <label for="" class="col-sm-2">Recipient Public key:</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="recipient_private_key" id="recipient_private_key" class="form-control">
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <label for="" class="col-sm-2">Amount:</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="amount" id="amount" class="form-control">
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                   <div class="col-sm-12 text-center">
+                        <input type="button" name="make_transactions" id="make_transactions" class="btn btn-primary" value="Send">
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+        <script src ="/static/vendor/jquery/jquery.min.js"></script>
+        <script src ="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src ="/static/vendor/DataTables/js/datatables.min.js"></script>
+        <script src ="/static/vendor/DataTables/js/ellipsis.js"></script>
+
+        
+        <script>
+            /* This code runs when the webpage is fully loaded--> */
+            $(function() {
+                $("#make_transactions").click(function(){
+                    $ajax({
+                        url:"/make/transactions"
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>
