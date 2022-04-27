@@ -1,17 +1,28 @@
-from flask import Flask, jsonify, render_template
+from cgitb import reset
+from flask import Flask, jsonify, request, render_template
 import Crypto
 import Crypto.Random
 from Crypto.PublicKey import RSA
 import binascii
+from collections import OrderedDict
 
+class Transaction:
 
-class Transactions:
-
-    def __init__(self, sender_address, sender_private_key, recipient_address, value):
-        self.sender_address = sender_address
+    def __init__(self, sender_public_key, sender_private_key, recipient_public_key, amount):
+        self.sender_public_key = sender_public_key
         self.sender_private_key = sender_private_key
-        self.recipient_address = recipient_address
-        self.value = value
+        self.recipient_public_key = recipient_public_key
+        self.amount = amount
+
+
+    #Function to convert transaction details to dictionary format
+    def to_dict(self):
+        return OrderedDict({
+            'sender_public_key' : self.sender_public_key,
+            'sender_private_key' : self.sender_private_key,
+            'recipient_public_key' : self.recipient_public_key,
+            'amount' : self.amount
+        })
 
 
 app = Flask(__name__)
@@ -47,7 +58,21 @@ def new_wallet():
 #Code to generate the transactions
 @app.route('/generate/transactions', methods=['POST'])
 def generate_transactions():
-    return 'Success'
+    #Extract transaction details from form
+    sender_public_key = request.form['sender_public_key']
+    sender_private_key =  request.form['sender_private_key']
+    recipient_public_key = request.form['recipient_public_key']
+    amount = request.form['amount']
+
+    #Make a Transaction object
+    transaction = Transaction(sender_public_key, sender_private_key, recipient_public_key, amount)
+
+    #Convert Transaction object into dictionary and sign it
+    response ={'transaction' : transaction.to_dict(),
+                'signature' :'signed'}
+
+
+    return response
 
 
 if __name__ == '__main__':
