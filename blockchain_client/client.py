@@ -43,6 +43,13 @@ def new_wallet():
 
     return response
 
+
+#Code to generate the transactions
+@app.route('/generate/transactions', methods=['POST'])
+def generate_transactions():
+    return 'Success'
+
+
 if __name__ == '__main__':
     from argparse import ArgumentParser
 
