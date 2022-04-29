@@ -84,7 +84,7 @@ def generate_transactions():
                 'signature' : transaction.sign_transaction()}
 
 
-    return response
+    return jsonify(response), 200
 
 
 if __name__ == '__main__':
