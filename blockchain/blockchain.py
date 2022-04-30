@@ -1,7 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask, jsonify, render_template
 from time import time
-
-
+from flask_cors import CORS #Cross-origin resource sharing policy (allow requests between port 8001 and 5001)
 
 
 class Blockchain:
@@ -32,10 +31,18 @@ blockchain = Blockchain()
 
 #Instantiate a node
 app = Flask(__name__)
+CORS(app) #Cross origin resource sharing policy
 
 @app.route('/')
 def index():
     return render_template('./index.html')
+
+@app.route('/transactions/new', methods=['POST'])
+def new_transaction():
+    response = {
+        'message' : 'OK'
+    }
+    return jsonify(response), 201
 
 
 if __name__ == '__main__':
