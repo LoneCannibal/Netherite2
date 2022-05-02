@@ -3,6 +3,11 @@ from flask import Flask, request, jsonify, render_template
 from time import time
 from flask_cors import CORS #Cross-origin resource sharing policy (allow requests between port 8001 and 5001)
 from collections import OrderedDict
+import binascii
+from Crypto.PublicKey import RSA
+from Crypto.Signature import PKCS1_v1_5
+from Crypto.Hash import SHA
+
 
 class Blockchain:
     
@@ -26,18 +31,30 @@ class Blockchain:
         self.transactions = []
         self.chain.append(block)
 
+    #Verify transaction signature
+    def verify_transaction_signature(self, sender_public_key, signature, transaction) :
+        #Get actual public key using unhexlify
+        public_key = RSA.importKey(binascii.unhexlify(sender_public_key))
+        verifier = PKCS1_v1_5.new(public_key)
+        #Generate hash using SHA
+        h = SHA.new(str(transaction).encode('utf8'))
+        #Verify the signature using the hash and public key
+        return verifier.verify(h, binascii.unhexlify(signature))
 
+    
+    #Signature validation and Rewards for miner
     def submit_transaction(self, sender_public_key, recipient_public_key, signature, amount):
         #TODO: Reward the miner with Netherite ingots
         #TODO: Validate the signature
 
         transaction = OrderedDict({
             'sender_public_key' : sender_public_key,
-            'recipient_public_key': recipient_public_key,
-            'signature': signature,
+            'recipient_public_key' : recipient_public_key,
             'amount': amount
         })
-        signature_verification = True
+
+        #Verify the transaction signature
+        signature_verification = self.verify_transaction_signature(sender_public_key, signature, transaction)
         if signature_verification:
             #Append current transaction to list of transactions
             self.transactions.append(transaction)
