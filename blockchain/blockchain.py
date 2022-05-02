@@ -1,7 +1,8 @@
-from flask import Flask, jsonify, render_template
+from typing import OrderedDict
+from flask import Flask, request, jsonify, render_template
 from time import time
 from flask_cors import CORS #Cross-origin resource sharing policy (allow requests between port 8001 and 5001)
-
+from collections import OrderedDict
 
 class Blockchain:
     
@@ -26,6 +27,24 @@ class Blockchain:
         self.chain.append(block)
 
 
+    def submit_transaction(self, sender_public_key, recipient_public_key, signature, amount):
+        #TODO: Reward the miner with Netherite ingots
+        #TODO: Validate the signature
+
+        transaction = OrderedDict({
+            'sender_public_key' : sender_public_key,
+            'recipient_public_key': recipient_public_key,
+            'signature': signature,
+            'amount': amount
+        })
+        signature_verification = True
+        if signature_verification:
+            #Append current transaction to list of transactions
+            self.transactions.append(transaction)
+            #No. of block to be mined
+            return len(self.chain) + 1 
+        return 3
+
 #Instantiate blockchain
 blockchain = Blockchain()
 
@@ -37,12 +56,26 @@ CORS(app) #Cross origin resource sharing policy
 def index():
     return render_template('./index.html')
 
+
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
-    response = {
-        'message' : 'OK'
-    }
-    return jsonify(response), 201
+    values = request.form
+
+    # TODO: Check the fields
+   
+
+
+    transaction_results = blockchain. submit_transaction(values['confirmation_sender_public_key'], values['confirmation_recipient_public_key'], values['transaction_signature'], values['confirmation_amount'])
+    if transaction_results == False:
+        response = {
+            'message' : 'Invalid Transaction'
+        }
+        return jsonify(response), 406
+    else:
+        response = {
+            'message' : 'Transaction will be added to the Block' + str(transaction_results)
+        }
+        return jsonify(response), 201
 
 
 if __name__ == '__main__':
