@@ -39,13 +39,16 @@ class Blockchain:
         #Generate hash using SHA
         h = SHA.new(str(transaction).encode('utf8'))
         #Verify the signature using the hash and public key
-        return verifier.verify(h, binascii.unhexlify(signature))
+        try:
+            verifier.verify(h, binascii.unhexlify(signature))
+            return True
+        except ValueError:
+            return False
 
     
     #Signature validation and Rewards for miner
     def submit_transaction(self, sender_public_key, recipient_public_key, signature, amount):
         #TODO: Reward the miner with Netherite ingots
-        #TODO: Validate the signature
 
         transaction = OrderedDict({
             'sender_public_key' : sender_public_key,
