@@ -8,6 +8,7 @@ from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
 from Crypto.Hash import SHA
 
+MINING_SENDER ="From the blockchain"
 
 class Blockchain:
     
@@ -48,22 +49,28 @@ class Blockchain:
     
     #Signature validation and Rewards for miner
     def submit_transaction(self, sender_public_key, recipient_public_key, signature, amount):
-        #TODO: Reward the miner with Netherite ingots
-
+        
         transaction = OrderedDict({
             'sender_public_key' : sender_public_key,
             'recipient_public_key' : recipient_public_key,
             'amount': amount
         })
 
-        #Verify the transaction signature
-        signature_verification = self.verify_transaction_signature(sender_public_key, signature, transaction)
-        if signature_verification:
-            #Append current transaction to list of transactions
+        #Reward the miner with Netherite ingots for mining a block
+        if sender_public_key == MINING_SENDER:
             self.transactions.append(transaction)
-            #No. of block to be mined
-            return len(self.chain) + 1 
-        return 3
+            return len(self.chain) + 1
+
+        #Normal transaction (not a reward from blockchain)
+        else:
+            #Verify the transaction signature
+            signature_verification = self.verify_transaction_signature(sender_public_key, signature, transaction)
+            if signature_verification:
+                #Append current transaction to list of transactions
+                self.transactions.append(transaction)
+                #No. of block to be mined
+                return len(self.chain) + 1
+        
 
 #Instantiate blockchain
 blockchain = Blockchain()
@@ -81,10 +88,11 @@ def index():
 def new_transaction():
     values = request.form
 
-    # TODO: Check the fields
+    # Check the fields for missing values
+    required =['confirmation_sender_public_key', 'confirmation_recipient_public_key', 'transaction_signature', 'confirmation_amount']
+    if not all(k in values for k in required):
+        return 'Values are missing', 400
    
-
-
     transaction_results = blockchain. submit_transaction(values['confirmation_sender_public_key'], values['confirmation_recipient_public_key'], values['transaction_signature'], values['confirmation_amount'])
     if transaction_results == False:
         response = {
