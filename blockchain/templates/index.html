@@ -83,7 +83,48 @@
     <script>
         /* This code runs when the webpage is fully loaded--> */
         $(function() {
-           
+           $.ajax({
+                url: "/transactions/get",
+                type: "GET",
+                success: function(response){
+
+                    let transactions = []
+                    let count = 1
+                    /*Loop over the list of transactions*/
+                    for(i=0; i<response['transactions'].length; i++){
+                        
+                        let transaction = [
+                            count, 
+                            response['transactions'][i]['sender_public_key'],
+                            response['transactions'][i]['recipient_public_key'],
+                            response['transactions'][i]['amount']
+                        ]
+
+                        /*Add transaction to the array of transactions*/
+                        transactions.push(transaction);
+                        count += 1;
+                    }
+
+                    /*Display unmined transaction table*/
+                    $('#unmined_transactions_table').dataTable({
+                        data: transactions,
+                        
+                        columns: [
+                            {title: "#"},
+                            {title:"Sender Public Key"},
+                            {title:"Recipient Public Key"},
+                            {title:"Amount"}
+                        ],
+
+                        /*Limit the number of characters in each column of the table*/
+                        columnDefs:[{targets: [1,2,3], render: $.fn.dataTable.render.ellipsis(25)}]
+
+                    });
+                },
+                error: function(error){
+                    console.log(error);
+                }
+           });
         });
     </script>
 
