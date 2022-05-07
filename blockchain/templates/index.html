@@ -44,7 +44,7 @@
     </div>
 
     <!--List of transactions to be added to blockchain and mine button-->
-    <div class="container">
+    <div class="container" id="unmined_table_div">
         <table class="table table-bordered" id="unmined_transactions_table" cellspacing = "0" width = "100%">
             
         </table>
@@ -68,7 +68,7 @@
     </div>
 
     <!--List of transactions to be added to blockchain and mine button-->
-    <div class="container">
+    <div class="container" id="mined_table_div">
         <table class="table table-bordered" id="mined_transactions_table" cellspacing = "0" width = "100%">
             
         </table>
@@ -84,6 +84,72 @@
     <script>
         /* This code runs when the webpage is fully loaded--> */
         $(function() {
+            /* ---Ajax request for getting blockchain(Mined Transactions)--- */
+            $.ajax({
+                url: "/chain",
+                type: "GET",
+                success: function(response){
+
+                    let transactions = []
+                    let count = 1
+                    /*Loop over the list of blocks*/
+                    for(i=0; i<response['length']; i++){
+                        /*Loop over list of transactions in each block*/
+                        for(j=0; j<response['chain'][i]['transactions'].length; j++){
+
+                            /*Formatting date options*/
+                            let options = {
+                                year : "numeric",
+                                month : "short",
+                                day : "numeric",
+                                hour : "2-digit",
+                                minute : "2-digit",
+                                second : "2-digit"
+                            }
+                            let date = new Date(response["chain"][i]["timestamp"] * 1000);
+                            formattedTimeStamp = date.toLocaleTimeString('en-US', options);
+
+                            /*Making list of transactions with data*/
+                            let transaction = [
+                                count, 
+                                response['chain'][i]['transactions'][j]['sender_public_key'],
+                                response['chain'][i]['transactions'][j]['recipient_public_key'],
+                                response['chain'][i]['transactions'][j]['amount'],
+                                formattedTimeStamp,
+                                response['chain'][i]['block_number']
+                            ]
+
+                            /*Add transaction to the array of transactions*/
+                            transactions.push(transaction);
+                            count += 1;
+                        }
+                    }
+                        
+                    /*Display mined transaction table*/
+                    $('#mined_transactions_table').dataTable({
+                        data: transactions,
+                        
+                        columns: [
+                            {title: "#"},
+                            {title:"Sender Public Key"},
+                            {title:"Recipient Public Key"},
+                            {title:"Amount"},
+                            {title:"Timestamp"},
+                            {title:"Block Number"}
+                        ],
+
+                        /*Limit the number of characters in each column of the table*/
+                        columnDefs:[{targets: [1,2,3], render: $.fn.dataTable.render.ellipsis(25)}]
+
+                    });
+                },
+                error: function(error){
+                    console.log(error);
+                }
+           });
+
+
+           /* ---Ajax request for getting unmined transactions--- */
            $.ajax({
                 url: "/transactions/get",
                 type: "GET",
@@ -126,23 +192,30 @@
                     console.log(error);
                 }
            });
+
+           /*Press on mine button to mine and reload the page*/
            $('#mine_button').click(function(){
                 $.ajax({
                     url: '/mine',
                     type: 'GET',
                     success: function(response){
-                        //window.location.reload();
+                        window.location.reload();
                     },
                     error: function(error){
                         console.log(error);
                     }
                 });
            });
+
+           /*Refresh buttons*/
+           $('#refresh-blockchain').click(function(){
+                window.location.reload();
+           });
+           $('#refresh-transactions').click(function(){
+                window.location.reload();
+           });
         });
     </script>
-
-
-
 
 </body>
 </html>
