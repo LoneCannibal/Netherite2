@@ -7,14 +7,19 @@ import binascii
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
 from Crypto.Hash import SHA
+from uuid import uuid4
 
 MINING_SENDER ="From the blockchain"
+MINING_REWARD = 1
 
 class Blockchain:
     
     def __init__(self):
         self.transactions = []
         self.chain = []
+        #Create id for each node
+        #Remove all dashes from generate uuid
+        self.node_id = str(uuid4()).replace('-','')
         #Create genesis block
         self.create_block(0,'0'*64)
     
@@ -30,7 +35,9 @@ class Blockchain:
         }
         #Reset current list of transactions
         self.transactions = []
+        #Add the block to the blockchain
         self.chain.append(block)
+        return block
 
     #Verify transaction signature
     def verify_transaction_signature(self, sender_public_key, signature, transaction) :
@@ -70,7 +77,15 @@ class Blockchain:
                 self.transactions.append(transaction)
                 #No. of block to be mined
                 return len(self.chain) + 1
-        
+    
+    #Implement proof of work function and difficulty
+    def proof_of_work(self):
+        return 69676
+
+    
+    #Function to hash the block
+    def hash(self, block):
+        return "dummyhash"
 
 #Instantiate blockchain
 blockchain = Blockchain()
@@ -88,6 +103,32 @@ def index():
 def get_transaction():
     transactions = blockchain.transactions
     response ={'transactions' : transactions}
+    return jsonify(response), 200
+
+
+@app.route('/mine', methods=['GET'])
+def mine():
+    #Getting nonce from POW function
+    nonce = blockchain.proof_of_work()
+
+    blockchain.submit_transaction(sender_public_key=MINING_SENDER,
+                                 recipient_public_key=blockchain.node_id,
+                                 signature='',
+                                 amount = MINING_REWARD)
+    #Get last block from blockchain
+    last_block = blockchain.chain[-1]
+    #Calculate hash of last block(i.e. previous block)
+    previous_hash = blockchain.hash(last_block)
+    block = blockchain.create_block(nonce, previous_hash)
+
+    response = {
+        'message' : 'New block created successfully',
+        'block_number' : block['block_number'],
+        'transactions' : block['transactions'],
+        'nonce' : block['nonce'],
+        'previous_hash' : block['previous_hash']
+    }
+
     return jsonify(response), 200
 
 

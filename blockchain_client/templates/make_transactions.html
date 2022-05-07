@@ -215,11 +215,11 @@
                         header: {'Access-Control-Allow-Origin': '*'}, /*For CORS(cross origin resource sharing) policy */
                         data: $('#confirmation_transaction_form').serialize(),
                         success: function(response) {
-                            /*Reset all textboxes to empty*/
-                            $('#sender_public_key').val('');
-                            $('#sender_private_key').val('');
-                            $('#recipient_public_key').val('');
-                            $('#amount').val('');
+                            /*Reset all textboxes to empty TODO: uncomment these 4 lines*/
+                            // $('#sender_public_key').val('');
+                            // $('#sender_private_key').val('');
+                            // $('#recipient_public_key').val('');
+                            // $('#amount').val('');
                             
                             /*Hide first modal and show second modal*/
                             $('#basic_modal').modal('hide');
