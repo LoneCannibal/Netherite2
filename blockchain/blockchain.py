@@ -8,6 +8,8 @@ from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
 from Crypto.Hash import SHA
 from uuid import uuid4
+import json
+import hashlib
 
 MINING_SENDER ="From the blockchain"
 MINING_REWARD = 1
@@ -85,7 +87,14 @@ class Blockchain:
     
     #Function to hash the block
     def hash(self, block):
-        return "dummyhash"
+        #Convert block data from dictionary to string
+        #Dictionary should be ordered to prevent inconsistent hashes
+        block_string = json.dumps(block, sort_keys=True).encode('utf-8')
+        #Hash with SHA256 algorithm
+        h=hashlib.new('sha256')
+        h.update(block_string)
+
+        return h.hexdigest()
 
 #Instantiate blockchain
 blockchain = Blockchain()
