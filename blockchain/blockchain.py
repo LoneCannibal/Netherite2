@@ -11,6 +11,7 @@ from uuid import uuid4
 import json
 import hashlib
 
+MINING_DIFFICULTY = 4
 MINING_SENDER ="From the blockchain"
 MINING_REWARD = 1
 
@@ -80,13 +81,38 @@ class Blockchain:
                 #No. of block to be mined
                 return len(self.chain) + 1
     
-    #Implement proof of work function and difficulty
+    
+    #To check for valid proof based on hash and mining difficulty
+    def valid_proof(self, transactions, previous_hash, nonce, difficulty = MINING_DIFFICULTY):
+        #Convert data into string and encode it for hashing
+        guess = (str(transactions) + str(previous_hash) + str(nonce)).encode('utf-8')
+
+        #Generate hash of the string
+        h = hashlib.new('sha256')
+        h.update(guess)
+        guess_hash = h.hexdigest()
+        #Checking if the first 'n' digits of the guess hash are zeros
+        #here 'n' = difficulty
+        return (guess_hash[:difficulty] == '0'* difficulty)
+
+    
+    #Implement proof of work function and calculate nonce
     def proof_of_work(self):
-        return 69676
+        #Get previous block and calculate its hash
+        previous_block = self.chain[-1]
+        previous_hash = self.hash(previous_block)
+
+        #Increment nonce till we get valid proof
+        #i.e. till the number of starting zeros matches the difficulty
+        nonce = 0
+        while self.valid_proof(self.transactions, previous_hash, nonce) is False:
+            nonce = nonce + 1
+        return nonce
 
     
     #Function to hash the block
-    def hash(self, block):
+    @staticmethod
+    def hash(block):
         #Convert block data from dictionary to string
         #Dictionary should be ordered to prevent inconsistent hashes
         block_string = json.dumps(block, sort_keys=True).encode('utf-8')
@@ -95,6 +121,7 @@ class Blockchain:
         h.update(block_string)
 
         return h.hexdigest()
+
 
 #Instantiate blockchain
 blockchain = Blockchain()
@@ -129,10 +156,13 @@ def mine():
     #Getting nonce from POW function
     nonce = blockchain.proof_of_work()
 
-    blockchain.submit_transaction(sender_public_key=MINING_SENDER,
-                                 recipient_public_key=blockchain.node_id,
-                                 signature='',
-                                 amount = MINING_REWARD)
+    blockchain.submit_transaction(
+        sender_public_key=MINING_SENDER,
+        recipient_public_key=blockchain.node_id,
+        signature='',
+        amount = MINING_REWARD
+    )
+
     #Get last block from blockchain
     last_block = blockchain.chain[-1]
     #Calculate hash of last block(i.e. previous block)
