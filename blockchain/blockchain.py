@@ -170,8 +170,8 @@ class Blockchain:
             response = requests.get('http://' + node + '/chain')
             #If response is OK
             if response.status_code == 200:
-                length = response.json(['length'])
-                chain = response.json(['chain'])
+                length = response.json()['length']
+                chain = response.json()['chain']
 
                 #Update max_length if longer valid chain is found
                 if length > max_length and self.valid_chain(chain):
