@@ -1,3 +1,4 @@
+from pydoc import resolve
 from typing import OrderedDict
 from flask import Flask, request, jsonify, render_template
 from time import time
@@ -10,6 +11,7 @@ from Crypto.Hash import SHA
 from uuid import uuid4
 import json
 import hashlib
+import requests
 
 MINING_DIFFICULTY = 4
 MINING_SENDER ="From the blockchain"
@@ -20,6 +22,7 @@ class Blockchain:
     def __init__(self):
         self.transactions = []
         self.chain = []
+        self.nodes = set()
         #Create id for each node
         #Remove all dashes from generate uuid
         self.node_id = str(uuid4()).replace('-','')
@@ -152,6 +155,36 @@ class Blockchain:
             #Increment to next block
             last_block = block
             current_index = current_index + 1
+
+    
+    #Resolve any differences in blockchains among the nodes
+    #AKA CONSENSUS ALGORITHM
+    def resolve_conflict(self):
+        neighbours = self.nodes
+        new_chain = None
+
+        #Initialize max_length
+        max_length = len(self.chain)
+        #Iterate through each node in neighbour list
+        for node in neighbours:
+            response = requests.get('http://' + node + '/chain')
+            #If response is OK
+            if response.status_code == 200:
+                length = response.json(['length'])
+                chain = response.json(['chain'])
+
+                #Update max_length if longer valid chain is found
+                if length > max_length and self.valid_chain(chain):
+                    max_length = length
+                    new_chain = chain
+        
+        #Replace chain with new chain if it is longer
+        if new_chain:
+            self.chain = new_chain
+            return True
+        
+        return False
+
 
 
 #Instantiate blockchain
