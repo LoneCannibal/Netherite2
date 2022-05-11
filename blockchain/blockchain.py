@@ -122,6 +122,37 @@ class Blockchain:
 
         return h.hexdigest()
 
+    #Validate the blockchain by iterating through each block on the blockchain
+    #Match each block hash with the previous hash of the next block
+    def valid_chain(self, chain):
+        previous_block = chain[0]
+        current_index = 1
+        
+        #Iterate through each block
+        while(current_index < len(chain)):
+            #Get current block from blockchain
+            block = chain[current_index]
+            #Check if stored previous hash value is equal to
+            #re-calculated hash value of previous block 
+            if block['previous_hash'] != self.hash(previous_block):
+                return False
+
+            #block['transactions'][:-1]-->We trim the last transaction from each block because
+            #the last transaction in each block is a mining reward given by the blockchain
+            transactions = block['transactions'][:-1]
+            
+            #Make sure the dictionary is ordered to prevent different hash
+            transaction_data = ['sender_public_key', 'recipient_public_key', 'amount']
+            transactions = [OrderedDict((k, transaction[k]) for k in transaction_data)for transaction in transactions]
+
+            #Checking if the block is valid by checking value of nonce
+            if not self.valid_proof(block['transactions'][:-1], block['previous_hash'], block['nonce'], MINING_DIFFICULTY):
+                return False
+
+            #Increment to next block
+            last_block = block
+            current_index = current_index + 1
+
 
 #Instantiate blockchain
 blockchain = Blockchain()
