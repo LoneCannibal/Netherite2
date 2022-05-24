@@ -215,6 +215,11 @@ def index():
     return render_template('./index.html')
 
 
+@app.route('/configure')
+def configure():
+    return render_template('./configure.html')
+
+
 @app.route('/transactions/get', methods=['GET'])
 def get_transaction():
     transactions = blockchain.transactions
