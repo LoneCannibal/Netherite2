@@ -1,5 +1,6 @@
 from pydoc import resolve
 from typing import OrderedDict
+from urllib import response
 from flask import Flask, request, jsonify, render_template
 from time import time
 from flask_cors import CORS #Cross-origin resource sharing policy (allow requests between port 8001 and 5001)
@@ -12,6 +13,7 @@ from uuid import uuid4
 import json
 import hashlib
 import requests
+from urllib.parse import urlparse
 
 MINING_DIFFICULTY = 4
 MINING_SENDER ="From the blockchain"
@@ -159,7 +161,7 @@ class Blockchain:
     
     #Resolve any differences in blockchains among the nodes
     #AKA CONSENSUS ALGORITHM
-    def resolve_conflict(self):
+    def resolve_conflicts(self):
         neighbours = self.nodes
         new_chain = None
 
@@ -184,6 +186,20 @@ class Blockchain:
             return True
         
         return False
+
+
+    
+    #Register a node in the network
+    def register_node(self, node_url):
+        #Check for valid node url
+        parsed_url = urlparse(node_url)
+        #Check for netloc or path
+        if parsed_url.netloc:
+            self.nodes.add(parsed_url.netloc)
+        elif parsed_url.path:
+            self.nodes.add(parsed_url.path)
+        else:
+            raise ValueError('ERROR: Invalid node URL')
 
 
 
@@ -264,6 +280,38 @@ def new_transaction():
             'message' : 'Transaction will be added to the Block' + str(transaction_results)
         }
         return jsonify(response), 201
+
+
+@app.route('/nodes/register', methods=['POST'])
+#Add nodes to the list of nodes
+def register_node():
+    #Get nodes from the form
+    values = request.form
+    #Get all the nodes(separated by commas) and remove empty spaces
+    nodes = values.get('nodes').replace(' ','').split(',')
+
+    #List of nodes is empty
+    if nodes is None:
+        return 'ERROR: There are no valid nodes!', 400
+
+    for node in nodes:
+        blockchain.register_node(node)
+
+    response = {
+        'message' : 'Nodes have been added successfully',
+        'total_nodes': [node for node in blockchain.nodes]
+    }
+
+    return jsonify(response), 200
+
+
+
+@app.route('/nodes/get', methods=['GET'])
+#Get the list of nodes in the network
+def get_nodes():
+    nodes = list(blockchain.nodes)
+    response = {'nodes':nodes}
+    return jsonify(response), 200
 
 
 if __name__ == '__main__':
