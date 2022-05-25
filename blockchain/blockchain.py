@@ -13,6 +13,7 @@ from uuid import uuid4
 import json
 import hashlib
 import requests
+import urllib
 from urllib.parse import urlparse
 
 MINING_DIFFICULTY = 4
@@ -318,6 +319,24 @@ def get_nodes():
     response = {'nodes':nodes}
     return jsonify(response), 200
 
+@app.route('/nodes/resolve', methods=['GET'])
+#Resolve blockchain conflicts
+def resolve():
+    
+    #Replace with longer chain if found, else retain blockchain
+    resolved = blockchain.resolve_conflicts()
+    if resolved:
+        response = {
+            'message' : 'Conflicts have been resolved and blockchain was replaced successfully',
+            'new_chain' : blockchain.chain
+        }
+    else:
+        response = {
+            'message' : 'Our chain is the longest valid chain. Blockchain was retained',
+            'chain' : blockchain.chain
+        }
+    return jsonify(response), 200
+
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
@@ -327,5 +346,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     port = args.port
     
+
     #Run flask app
-    app.run(port=port, debug=True)
+    app.run(host="0.0.0.0",port=port, debug=True)
+    
