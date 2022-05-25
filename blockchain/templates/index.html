@@ -207,10 +207,20 @@
                 });
            });
 
-           /*Refresh buttons*/
+           /*Refresh button for blockchian*/
            $('#refresh-blockchain').click(function(){
-                window.location.reload();
+                $.ajax({
+                        url: '/nodes/resolve',
+                        type: 'GET',
+                        success: function(response){
+                            window.location.reload();
+                        },
+                        error: function(error){
+                            console.log(error);
+                        }
+                    });
            });
+           /*Refresh button for transaction list*/
            $('#refresh-transactions').click(function(){
                 window.location.reload();
            });
