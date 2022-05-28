@@ -7,6 +7,7 @@ import binascii
 from collections import OrderedDict
 from Crypto.Signature import PKCS1_v1_5
 from Crypto.Hash import SHA
+import webbrowser
 
 
 class Transaction:
@@ -94,5 +95,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     port = args.port
     
+    #Open url in browser
+    webbrowser.open('http://127.0.0.1:'+str(port))
     #Run flask app
     app.run(host="0.0.0.0",port=port, debug=True)

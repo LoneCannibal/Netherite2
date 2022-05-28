@@ -13,7 +13,7 @@ from uuid import uuid4
 import json
 import hashlib
 import requests
-import urllib
+import webbrowser
 from urllib.parse import urlparse
 
 MINING_DIFFICULTY = 4
@@ -345,8 +345,8 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--port', default = 5001, type = int, help ="Port to listen")
     args = parser.parse_args()
     port = args.port
-    
 
+    #Open url in browser
+    webbrowser.open('http://127.0.0.1:'+str(port))
     #Run flask app
     app.run(host="0.0.0.0",port=port, debug=True)
-    
