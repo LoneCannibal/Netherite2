@@ -53,15 +53,23 @@
     <div class="container">
         <div class="row">
             <label  for="public_key" class="col-sm-2">Public Key:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-8">
                 <textarea class="form-control" name="" id="public_key" rows="5" readonly></textarea>
+            </div>
+            <div class="col-sm-2">
+                <br><br>
+                <button id="copy_public_key" class="btn btn-secondary">Copy</button>
             </div>
         </div>
         <br>
         <div class="row">
             <label  for="private_key" class="col-sm-2">Private Key:</label>
-            <div class="col-sm-10">
+            <div class="col-sm-8">
                 <textarea class="form-control" name="" id="private_key" rows="5" readonly></textarea>
+            </div>
+            <div class="col-sm-2">
+                <br><br>
+                <button id="copy_private_key" class="btn btn-secondary">Copy</button>
             </div>
         </div>
     </div>
@@ -75,7 +83,7 @@
             <div class="alert alert-danger" role="alert">
                 WARNING!
                 <ul>
-                    <li>Please save your private and public keys. They cannot be recovered</li>
+                    <li>Please copy your private and public keys. They cannot be recovered</li>
                     <li>DO NOT share your private key</li>
                 </ul>
             </div>
@@ -105,6 +113,22 @@
                         console.log(error);
                     }
                 });
+            });
+
+            
+            /*Copy public key button*/
+            $(document.getElementById('copy_public_key')).click(function() {
+                var text = document.getElementById("public_key");
+                text.select();
+                navigator.clipboard.writeText(text.value);
+            });
+
+
+             /*Copy private key button*/
+             $(document.getElementById('copy_private_key')).click(function() {
+                var text = document.getElementById("private_key");
+                text.select();
+                navigator.clipboard.writeText(text.value);
             });
         });
     </script>
