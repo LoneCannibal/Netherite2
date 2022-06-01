@@ -32,9 +32,12 @@ python3 blockchain_client.py -p 8081
 
 Copy paste the following links in your browser
 
+Backend:
 ```
 http://localhost:5001
 ```
+<br>
+Frontend:
 ```
 http://localhost:8081
 ```
