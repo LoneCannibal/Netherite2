@@ -28,7 +28,7 @@ python3 blockchain_client.py -p 8081
 ```
 
 
-#Access webpages
+# Access web application
 
 Copy paste the following links in your browser
 
