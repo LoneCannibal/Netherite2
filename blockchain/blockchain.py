@@ -239,6 +239,12 @@ def get_chain():
 
 @app.route('/mine', methods=['GET'])
 def mine():
+    #Check if there are any unmined transactions
+    if len(blockchain.transactions) == 0:
+        response = {
+            'message' : 'No unmined transactions available'
+        }
+        return jsonify(response), 406
     #Getting nonce from POW function
     nonce = blockchain.proof_of_work()
 
