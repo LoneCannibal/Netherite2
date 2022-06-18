@@ -29,7 +29,7 @@ python3 blockchain.py -p 5001
 # Run blockchain frontend:
 > :warning: Open a new terminal window and go to the parent directory!
 ```
-cd blockchain_client
+cd client
 python3 blockchain_client.py -p 8081
 ```
 
