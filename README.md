@@ -7,9 +7,15 @@ Install Python3 and pip3:<br>
 sudo apt install python3 -y
 sudo apt install python3-pip
 ```
+#Install git and clone repository:<br>
+```
+sudo apt install git
+git clone https://github.com/LoneCannibal/Netherite2/
+```
 
 Install requirements: <br>
 ```
+cd Netherite
 pip3 install -r requirements.txt
 ```
 
