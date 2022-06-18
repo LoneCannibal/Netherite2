@@ -30,7 +30,7 @@ python3 blockchain.py -p 5001
 > :warning: Open a new terminal window and go to the parent directory!
 ```
 cd client
-python3 blockchain_client.py -p 8081
+python3 client.py -p 8081
 ```
 
 
