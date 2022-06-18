@@ -29,7 +29,7 @@ python3 blockchain.py -p 5001
 # Run blockchain frontend:
 > :warning: Open a new terminal window and go to the parent directory!
 ```
-cd client
+cd Netherite2/blockchain_client
 python3 client.py -p 8081
 ```
 
